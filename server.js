@@ -6,9 +6,10 @@ const cors = require("cors");
 const multer = require("multer");
 const path = require("path");
 require("dotenv").config();
-
+const userRoutes = require("./routes/profileRoutes");
 const authRoutes = require("./routes/auths");
 const messageRoutes = require("./routes/messages");
+const uploadRoutes = require("./routes/uploadRoutes");
 
 const app = express();
 
@@ -18,6 +19,8 @@ app.use(cors({ origin: "http://localhost:5000", methods: ["GET", "POST"], creden
 // Middleware for body parsing
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use("/uploads", express.static("uploads")); // Serve uploaded profile photos
+app.use("/uploads", express.static("uploads")); // Serve uploaded files
 
 // Multer storage configuration for file uploads
 const storage = multer.diskStorage({
@@ -53,6 +56,10 @@ mongoose.connect(process.env.MONGODB_URI)
 // API Routes
 app.use("/api/auths", authRoutes);
 app.use("/api/messages", messageRoutes);
+// Routes
+app.use("/api/profile", userRoutes);
+// Use Upload Routes
+app.use("/api/upload", uploadRoutes);
 
 // Start Server
 const server = app.listen(process.env.PORT, () => {
